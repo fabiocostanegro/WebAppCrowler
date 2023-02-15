@@ -8,7 +8,8 @@
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="110.0.5481.7700" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\FifaTradeBot\TradeFifaBot\Fonte\Fonte.csproj" />
+    <ProjectReference Include="..\CrowlerFramework\CrowlerFramework.csproj" />
+    <ProjectReference Include="..\Fonte\Fonte.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
