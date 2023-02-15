@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppCrowler", "WebAppCrowler\WebAppCrowler.csproj", "{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppCrowler", "WebAppCrowler\WebAppCrowler.csproj", "{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrowlerFramework", "..\FifaTradeBot\TradeFifaBot\CrowlerFramework\CrowlerFramework.csproj", "{AEB08EED-8073-445F-820A-5CB4F908A16A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonte", "Fonte\Fonte.csproj", "{FBF976CA-E05A-4085-B83B-7DFEE4139F67}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonte", "..\FifaTradeBot\TradeFifaBot\Fonte\Fonte.csproj", "{48E59140-2196-461C-8DE1-DBEC6758281A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrowlerFramework", "CrowlerFramework\CrowlerFramework.csproj", "{8F29EC81-56F7-41CA-BD01-2DB8EF8FB096}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48E59140-2196-461C-8DE1-DBEC6758281A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48E59140-2196-461C-8DE1-DBEC6758281A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48E59140-2196-461C-8DE1-DBEC6758281A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48E59140-2196-461C-8DE1-DBEC6758281A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF976CA-E05A-4085-B83B-7DFEE4139F67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF976CA-E05A-4085-B83B-7DFEE4139F67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF976CA-E05A-4085-B83B-7DFEE4139F67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF976CA-E05A-4085-B83B-7DFEE4139F67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F29EC81-56F7-41CA-BD01-2DB8EF8FB096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F29EC81-56F7-41CA-BD01-2DB8EF8FB096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F29EC81-56F7-41CA-BD01-2DB8EF8FB096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F29EC81-56F7-41CA-BD01-2DB8EF8FB096}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

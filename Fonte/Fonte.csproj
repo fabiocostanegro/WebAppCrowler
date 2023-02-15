@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="100.0.4896.6000" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CrowlerFramework\CrowlerFramework.csproj" />
+  </ItemGroup>
+
+</Project>
