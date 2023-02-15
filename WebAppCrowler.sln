@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppCrowler", "WebAppCrowler\WebAppCrowler.csproj", "{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrowlerFramework", "..\FifaTradeBot\TradeFifaBot\CrowlerFramework\CrowlerFramework.csproj", "{AEB08EED-8073-445F-820A-5CB4F908A16A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonte", "..\FifaTradeBot\TradeFifaBot\Fonte\Fonte.csproj", "{48E59140-2196-461C-8DE1-DBEC6758281A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FC89CE8-2A1E-48F1-9E4F-7FB909F73409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEB08EED-8073-445F-820A-5CB4F908A16A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48E59140-2196-461C-8DE1-DBEC6758281A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48E59140-2196-461C-8DE1-DBEC6758281A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48E59140-2196-461C-8DE1-DBEC6758281A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48E59140-2196-461C-8DE1-DBEC6758281A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1B611CAB-5280-4898-804D-58ED1EF4D6A7}
+	EndGlobalSection
+EndGlobal
