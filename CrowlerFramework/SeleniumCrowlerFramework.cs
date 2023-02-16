@@ -164,5 +164,17 @@ namespace CrowlerFramework
             }
             return tabela;
         }
+        public int RetornarQuantidadeItensTabela(string seletorCSS)
+        {
+            try
+            {
+                ReadOnlyCollection<IWebElement> element = driver.FindElements(By.ClassName(seletorCSS));
+                return element.Count;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

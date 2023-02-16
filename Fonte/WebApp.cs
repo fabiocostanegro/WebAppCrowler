@@ -9,6 +9,7 @@ namespace Fonte
     {
         private string url = "https://www.easports.com/fifa/ultimate-team/web-app/";
         protected string cssValorJogador = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.search-prices > div:nth-child(6) > div.ut-numeric-input-spinner-control > input";
+        protected string cssValorLanceMaximoJogador = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.search-prices > div:nth-child(3) > div.ut-numeric-input-spinner-control > input";
         protected string cssNomeJogador = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control > div > div.ut-player-search-control--input-container > input";
         public WebApp(Framework framework, string caminhoProfile) : base(framework, caminhoProfile)
         {

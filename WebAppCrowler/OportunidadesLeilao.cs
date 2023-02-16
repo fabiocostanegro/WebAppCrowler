@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Fonte.Consultas.ConsultaValorJogador;
 
 namespace WebAppCrowler
 {
@@ -24,6 +25,11 @@ namespace WebAppCrowler
 
             string caminhoProfile = "user-data-dir=C:\\Users\\55319\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 3";
 
+            ConsultaValorJogadorWebApp consulta = new ConsultaValorJogadorWebApp(Fonte.FonteBase.Framework.Selenium, caminhoProfile, 30);
+            int qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["val"]), 0));
+            
+            responseMessage = "Existem " + qtdJogadoreslance + " jogadores com preço informado no lance";
+            consulta.FecharPagina();
             return new OkObjectResult(responseMessage);
         }
     }
