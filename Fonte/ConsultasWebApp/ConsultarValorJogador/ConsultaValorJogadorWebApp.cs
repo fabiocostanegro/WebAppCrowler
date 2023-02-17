@@ -57,7 +57,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
         {
             Int32 valorAtualMercado = jogador.ValorMinimoPrevisto;
 
-            ConsultarJogador(jogador.NomeJogador);
+            ConsultarJogador(jogador.NomeJogador, jogador.IndiceJogador);
             bool achouJogador = ConsultarValorJogador(valorAtualMercado);
             while(achouJogador) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
             {
@@ -125,7 +125,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
         }
         private int ConsultarValorJogadorLance(JogadorPrecoPrevisto jogador)
         {
-            this.ConsultarJogador(jogador.NomeJogador);
+            this.ConsultarJogador(jogador.NomeJogador, jogador.IndiceJogador);
             this.navegador.DigitarTexto(cssValorLanceMaximoJogador, jogador.ValorMinimoPrevisto.ToString());
             this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.button-container > button.btn-standard.call-to-action");
             this.navegador.EsperarCarregamento(2000);
@@ -144,6 +144,14 @@ namespace Fonte.Consultas.ConsultaValorJogador
             string cssSelectorBoxPesquisa = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list > ul > button > span.btn-text";
             this.navegador.DigitarTexto(cssNomeJogador, cssSelectorBoxPesquisa, nomeJogador);
             this.navegador.Clicar(cssSelectorBoxPesquisa);
+        }
+        private void ConsultarJogador(string nomeJogador, int index)
+        {
+            string cssSeletorJogador = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.is-open.has-selection.contract-text-input > div > div.inline-list > ul > button:nth-child(" + index + ") > span.btn-text";
+            string cssSelectorBoxPesquisa = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list > ul > button > span.btn-text";
+            
+            this.navegador.DigitarTexto(cssNomeJogador, cssSelectorBoxPesquisa, nomeJogador);
+            this.navegador.Clicar(cssSeletorJogador);
         }
         public void FecharPagina()
         {
