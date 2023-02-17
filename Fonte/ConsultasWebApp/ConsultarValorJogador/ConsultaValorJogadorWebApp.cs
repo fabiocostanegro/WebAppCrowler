@@ -131,9 +131,11 @@ namespace Fonte.Consultas.ConsultaValorJogador
             this.navegador.EsperarCarregamento(2000);
             if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
             {
-
-                string cssResultadoPesquisa = "listFUTItem";
-                return this.navegador.RetornarQuantidadeItensTabela(cssResultadoPesquisa);
+                string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
+                if (!textoTempo.Contains("Horas"))
+                    return this.navegador.RetornarQuantidadeItensTabela("listFUTItem");
+                else
+                    return 0;       
             }
             return 0;
         }
