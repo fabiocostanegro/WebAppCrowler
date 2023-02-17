@@ -58,16 +58,28 @@ namespace Fonte.Consultas.ConsultaValorJogador
             Int32 valorAtualMercado = jogador.ValorMinimoPrevisto;
 
             ConsultarJogador(jogador.NomeJogador);
-            bool achouJogador = ConsultarValorJogador(valorAtualMercado, qtdMinutosRestantesMinimo);
+            bool achouJogador = ConsultarValorJogador(valorAtualMercado);
+            while(achouJogador) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
+            {
+                VoltarTelaPesquisa();
+                valorAtualMercado = valorAtualMercado - jogador.IncrementoValor;
+                achouJogador = ConsultarValorJogador(valorAtualMercado);
+                if(!achouJogador)
+                {
+                    VoltarTelaPesquisa();
+                    return valorAtualMercado - jogador.IncrementoValor;
+                }
+            }
 
             while (!achouJogador)
             {
                 VoltarTelaPesquisa();
                 valorAtualMercado = valorAtualMercado + jogador.IncrementoValor;
-                achouJogador = ConsultarValorJogador(valorAtualMercado, qtdMinutosRestantesMinimo);
+                achouJogador = ConsultarValorJogador(valorAtualMercado);
             }
             VoltarTelaPesquisa();
             return valorAtualMercado;
+            
         }
         private void LimparCamposConsulta()
         {
@@ -95,9 +107,19 @@ namespace Fonte.Consultas.ConsultaValorJogador
                 Regex rg = new Regex(pattern);
                 Match m = rg.Match(textoMinutos);
 
-                if (Convert.ToInt32(m.Value) <= qtdMinutosRestantesMinimo)
+                if (Convert.ToInt32(m.Value) >= qtdMinutosRestantesMinimo)
                     return true;
             }
+            return false;
+
+        }
+        private bool ConsultarValorJogador(int valorJogador)
+        {
+            this.navegador.DigitarTexto(cssValorJogador, valorJogador.ToString());
+            this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.button-container > button.btn-standard.call-to-action");
+            this.navegador.EsperarCarregamento(2000);
+            if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
+                return true;
             return false;
 
         }
