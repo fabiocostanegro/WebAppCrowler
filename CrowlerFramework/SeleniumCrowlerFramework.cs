@@ -14,7 +14,7 @@ namespace CrowlerFramework
 {
     public class SeleniumCrowlerFramework : ICrowlerFramework, IDisposable
     {
-        private IWebDriver driver;
+        protected IWebDriver driver;
         private WebDriverWait wait;
         public SeleniumCrowlerFramework(string pCaminhoProfile, int quantidadeTempoSegundosMaximoEspera)
         {
