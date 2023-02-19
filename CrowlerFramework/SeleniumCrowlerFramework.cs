@@ -138,22 +138,32 @@ namespace CrowlerFramework
             IWebElement element = driver.FindElement(By.CssSelector(seletorCSS));
             return element.Text;
         }
-        public List<ItensTabela> ConstruirTabela(string pSeletorTabela, string pSeletorLinha, List<Coluna> pColunas)
+        public List<ItensTabela> ConstruirTabela(string pSeletorTabela, List<string> pClasseLinha, List<int> pIndiceInicioLinha, int pIncrementoLinha, List<Coluna> pColunas)
         {
-            Table tabela = new Table(pSeletorTabela, pSeletorLinha, pColunas);
+            Table tabela = new Table(pSeletorTabela, pColunas);
             List<ItensTabela> ItensList = new List<ItensTabela>();
             IWebElement elementoTabela = driver.FindElement(By.CssSelector(pSeletorTabela));
-            ReadOnlyCollection<IWebElement> elementoItens = elementoTabela.FindElements(By.CssSelector(pSeletorLinha));
-            for (int i = 0; i < elementoItens.Count; i++)
+            
+            ReadOnlyCollection<IWebElement> elementoItens = new ReadOnlyCollection<IWebElement>(new List<IWebElement>());
+            for (int i=0; i<pClasseLinha.Count; i++)
             {
-                foreach (Coluna item in pColunas)
+                elementoItens = elementoTabela.FindElements(By.ClassName(pClasseLinha[i]));
+                int indiceLinha = pIndiceInicioLinha[i];
+                string seletorColunaTemp = string.Empty;
+                for (int j = 0; j < elementoItens.Count; j++)
                 {
-                    item.ValorColuna = elementoItens[i].FindElement(By.CssSelector(item.SeletorColuna)).Text;
                     ItensList.Add(new ItensTabela());
-                    ItensList[i].Colunas.Add(item); 
+                    for (int k=0;k<pColunas.Count;k++)
+                    {
+                        seletorColunaTemp = pColunas[k].SeletorColuna.Replace("<<indexLinha>>", indiceLinha.ToString());
+                        Coluna colunaTemp = new Coluna(pColunas[k].SeletorColuna, pColunas[k].NomeColuna);
+                        colunaTemp.ValorColuna = elementoItens[j].FindElement(By.CssSelector(seletorColunaTemp)).Text;
+                        ItensList[ItensList.Count - 1].Colunas.Add(colunaTemp);
+                    }
+                    indiceLinha = indiceLinha + pIncrementoLinha;
                 }
-                
             }
+            
             return ItensList;
         }
         public int RetornarQuantidadeItensTabela(string seletorCSS)

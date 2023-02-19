@@ -9,11 +9,10 @@ namespace CrowlerFramework
         public string SeletorTabela { get; set; }
         public List<Coluna> ColunasTabela { get; set; }
         public string SeletorLinha { get; set; }
-        public Table(string pSeletorTabela, string pSeletorLinha, List<Coluna> pColunas)
+        public Table(string pSeletorTabela, List<Coluna> pColunas)
         {
             SeletorTabela = pSeletorTabela;
             ColunasTabela = pColunas;
-            SeletorLinha = pSeletorLinha;
         }
 
     }
