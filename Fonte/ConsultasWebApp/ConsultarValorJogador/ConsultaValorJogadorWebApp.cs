@@ -27,7 +27,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
             return ConsultarValorAtualJogador(listaJogadores, qtdMinutosRestantesMinimo);
 
         }
-        public int ConsultarExisteJogadorLance(JogadorPrecoPrevisto jogador)
+        public JogadoresLance ConsultarExisteJogadorLance(JogadorPrecoPrevisto jogador)
         {
             Console.WriteLine("Iniciando acesso ao WebAPP");
             base.AcessarWebAPP();
@@ -67,7 +67,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
                 if(!achouJogador)
                 {
                     VoltarTelaPesquisa();
-                    return valorAtualMercado - jogador.IncrementoValor;
+                    return valorAtualMercado + jogador.IncrementoValor; //ultimo valor achado
                 }
             }
 
@@ -123,7 +123,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
             return false;
 
         }
-        private int ConsultarValorJogadorLance(JogadorPrecoPrevisto jogador)
+        private JogadoresLance ConsultarValorJogadorLance(JogadorPrecoPrevisto jogador)
         {
             this.ConsultarJogador(jogador.NomeJogador, jogador.IndiceJogador);
             this.navegador.DigitarTexto(cssValorLanceMaximoJogador, jogador.ValorMinimoPrevisto.ToString());
@@ -133,11 +133,11 @@ namespace Fonte.Consultas.ConsultaValorJogador
             {
                 string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
                 if (!textoTempo.Contains("Horas"))
-                    return this.navegador.RetornarQuantidadeItensTabela("listFUTItem");
+                    return new JogadoresLance(jogador.NomeJogador,this.navegador.RetornarQuantidadeItensTabela("listFUTItem"));
                 else
-                    return 0;       
+                    return new JogadoresLance(jogador.NomeJogador, 0);
             }
-            return 0;
+            return new JogadoresLance(jogador.NomeJogador, 0);
         }
         private void ConsultarJogador(string nomeJogador)
         {
