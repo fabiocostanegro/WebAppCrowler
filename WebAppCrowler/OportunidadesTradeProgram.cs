@@ -67,9 +67,9 @@ namespace WebAppCrowler
             switch (tipo)
             {
                 case ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares:
-                    return 500;
-                default:
                     return 1000;
+                default:
+                    return 500;
             }
         }
 

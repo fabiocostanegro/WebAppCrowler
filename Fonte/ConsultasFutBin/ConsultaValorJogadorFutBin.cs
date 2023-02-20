@@ -87,7 +87,7 @@ namespace Fonte.ConsultasFutBin
             switch (tipoJogador)
             {
                 case TipoJogadorTrade.OuroNaoRaroMaisCaro:
-                    return "https://www.futbin.com/players?page=1&eUnt=1&order=desc&pos_type=all&sort=pc_price&version=gold_nr";
+                    return "https://www.futbin.com/players?page=1&eClubs=479&eUnt=1&order=desc&pos_type=all&sort=pc_price&version=gold_nr";
                 case TipoJogadorTrade.Populares:
                     return "https://www.futbin.com/players?page=1&eUnt=1&order=desc&sort=likes";
                 case TipoJogadorTrade.Forragem84:

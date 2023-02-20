@@ -126,6 +126,7 @@ namespace CrowlerFramework
         {
             IWebElement element = driver.FindElement(By.CssSelector(seletorCSS));
             element.SendKeys(texto);
+            Thread.Sleep(1000);
             AguardarElementoIndicadorPaginaCarregadaVisivel(elementoIndicadorPaginaCompleta);
         }
         public string RetornarTexto(string seletorCSS)

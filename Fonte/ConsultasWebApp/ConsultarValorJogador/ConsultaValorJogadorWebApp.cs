@@ -45,11 +45,18 @@ namespace Fonte.Consultas.ConsultaValorJogador
             foreach (JogadorPrecoPrevisto item in listaJogadores)
             {
                 Console.WriteLine("Consultando jogador " + item.NomeJogador);
-                Int32 valorMercadoAtual = ConsultarJogador(item, qtdMinutosRestantesMinimo);
-                Console.WriteLine("Jogador " + item.NomeJogador + " consultado com sucesso");
-                listaValorMercado.Add(new JogadorValorMercadoAtual(item.NomeJogador, valorMercadoAtual));
-                LimparCamposConsulta();
-
+                try
+                {
+                    Int32 valorMercadoAtual = ConsultarJogador(item, qtdMinutosRestantesMinimo);
+                    Console.WriteLine("Jogador " + item.NomeJogador + " consultado com sucesso");
+                    listaValorMercado.Add(new JogadorValorMercadoAtual(item.NomeJogador, valorMercadoAtual));
+                    LimparCamposConsulta();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Erro ao consultar o jogador: " + item.NomeJogador);
+                    LimparCamposConsulta();
+                }
             }
             this.navegador.FecharPagina();
             return listaValorMercado;
@@ -64,6 +71,8 @@ namespace Fonte.Consultas.ConsultaValorJogador
             {
                 VoltarTelaPesquisa();
                 valorAtualMercado = valorAtualMercado - jogador.IncrementoValor;
+                if (valorAtualMercado < 0)
+                    throw new Exception();
                 achouJogador = ConsultarValorJogador(valorAtualMercado);
                 if(!achouJogador)
                 {
@@ -167,6 +176,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
             colunaList.Add(new Coluna(seletorOverAll, "OverAll"));
 
             this.navegador.DigitarTexto(cssNomeJogador, seletorTabela, nomeJogador);
+            
             List<ItensTabela> lista = this.navegador.ConstruirTabela(seletorTabela, classeLinha, colunaList);
 
             int indice = lista.FindIndex(e => (e.Colunas[0].ValorColuna == nomeJogador && e.Colunas[1].ValorColuna == overAll.ToString()));
