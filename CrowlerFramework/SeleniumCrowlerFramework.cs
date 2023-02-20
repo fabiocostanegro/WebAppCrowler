@@ -166,6 +166,32 @@ namespace CrowlerFramework
             
             return ItensList;
         }
+        public List<ItensTabela> ConstruirTabela(string pSeletorTabela, string pClasseLinhas, List<Coluna> pColunas)
+        {
+            
+            Table tabela = new Table(pSeletorTabela, pColunas);
+            List<ItensTabela> ItensList = new List<ItensTabela>();
+            IWebElement elementoTabela = driver.FindElement(By.CssSelector(pSeletorTabela));
+
+            ReadOnlyCollection<IWebElement> elementoItens = new ReadOnlyCollection<IWebElement>(new List<IWebElement>());
+            elementoItens = elementoTabela.FindElements(By.ClassName(pClasseLinhas));
+            int indiceLinha = 1;
+            string seletorColunaTemp = string.Empty;
+            for (int j = 0; j < elementoItens.Count; j++)
+            {
+                ItensList.Add(new ItensTabela());
+                for (int k = 0; k < pColunas.Count; k++)
+                {
+                    seletorColunaTemp = pColunas[k].SeletorColuna.Replace("<<indexLinha>>", indiceLinha.ToString());
+                    Coluna colunaTemp = new Coluna(pColunas[k].SeletorColuna, pColunas[k].NomeColuna);
+                    colunaTemp.ValorColuna = elementoTabela.FindElement(By.CssSelector(seletorColunaTemp)).Text;
+                    colunaTemp.SeletorColuna = seletorColunaTemp;
+                    ItensList[ItensList.Count - 1].Colunas.Add(colunaTemp);
+                }
+                indiceLinha = indiceLinha + 1;
+            }
+            return ItensList;
+        }
         public int RetornarQuantidadeItensTabela(string seletorCSS)
         {
             try

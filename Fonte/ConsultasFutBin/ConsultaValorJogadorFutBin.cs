@@ -61,12 +61,15 @@ namespace Fonte.ConsultasFutBin
             string url = ObterUrlPorTipoJogadorTrade(tipoJogador);
             base.AcessarFutbin(url);
             string seletorTabela = "#repTb";
-            string seletorLinha = "#repTb > tbody > tr:nth-child(<<indexLinha>>)";
             string seletorColunaNome = "#repTb > tbody > tr:nth-child(<<indexLinha>>) > td.table-row-text.row > div.d-inline.pt-2.pl-3 > div:nth-child(1) > a";
             string seletorColunaValor = "#repTb > tbody > tr:nth-child(<<indexLinha>>) > td:nth-child(6) > span";
+            string seletorOverAll = "#repTb > tbody > tr:nth-child(<<indexLinha>>) > td:nth-child(3) > span";
+            string versao = "#repTb > tbody > tr:nth-child(<<indexLinha>>) > td.mobile-hide-table-col > div:nth-child(1)";
             List<Coluna> colunaList = new List<Coluna>();
             colunaList.Add(new Coluna(seletorColunaNome, "NomeJogador"));
             colunaList.Add(new Coluna(seletorColunaValor, "ValorJogador"));
+            colunaList.Add(new Coluna(seletorOverAll, "OverAll"));
+            colunaList.Add(new Coluna(versao, "Versao"));
             List<string> listaSeletores = new List<string>();
             listaSeletores.Add("player_tr_1");
             listaSeletores.Add("player_tr_2");
@@ -75,7 +78,7 @@ namespace Fonte.ConsultasFutBin
             listaIndexLinha.Add(1);
             listaIndexLinha.Add(3);
 
-            return base.ConsultarListaJogadoresTrade(seletorTabela, seletorLinha, listaSeletores, listaIndexLinha, 4, colunaList);
+            return base.ConsultarListaJogadoresTrade(seletorTabela, listaSeletores, listaIndexLinha, 4, colunaList);
 
 
         }

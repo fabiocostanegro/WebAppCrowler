@@ -27,7 +27,7 @@ namespace WebAppCrowler
             string caminhoProfile = "user-data-dir=C:\\Users\\55319\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 3";
 
             ConsultaValorJogadorWebApp consulta = new ConsultaValorJogadorWebApp(Fonte.FonteBase.Framework.Selenium, caminhoProfile, 30);
-            JogadoresLance qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["val"]), 0, Convert.ToInt32(req.Query["index"])));
+            JogadoresLance qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["overall"]), req.Query["versao"], Convert.ToInt32(req.Query["val"]), 0, Convert.ToInt32(req.Query["index"])));
             
             responseMessage = "Existem " + qtdJogadoreslance + " jogadores com preço informado no lance";
             consulta.FecharPagina();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using CrowlerFramework;
 using Fonte;
 using Fonte.ConsultasWebApp.ConsultarValorJogador;
 
@@ -57,7 +58,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
         {
             Int32 valorAtualMercado = jogador.ValorMinimoPrevisto;
 
-            ConsultarJogador(jogador.NomeJogador, jogador.IndiceJogador);
+            ConsultarJogadorOverAll(jogador.NomeJogador, jogador.OverAll);
             bool achouJogador = ConsultarValorJogador(valorAtualMercado);
             while(achouJogador) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
             {
@@ -152,6 +153,24 @@ namespace Fonte.Consultas.ConsultaValorJogador
             
             this.navegador.DigitarTexto(cssNomeJogador, cssSelectorBoxPesquisa, nomeJogador);
             this.navegador.Clicar(cssSeletorJogador);
+        }
+        private void ConsultarJogadorOverAll(string nomeJogador, int overAll)
+        {
+            string seletorTabela = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list";
+
+            string classeLinha = "btn-text";
+                                  
+            string seletorColunaNome = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list > ul > button:nth-child(<<indexLinha>>) > span.btn-text";
+            string seletorOverAll = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list > ul > button:nth-child(<<indexLinha>>) > span.btn-subtext";
+            List<Coluna> colunaList = new List<Coluna>();
+            colunaList.Add(new Coluna(seletorColunaNome, "NomeJogador"));
+            colunaList.Add(new Coluna(seletorOverAll, "OverAll"));
+
+            this.navegador.DigitarTexto(cssNomeJogador, seletorTabela, nomeJogador);
+            List<ItensTabela> lista = this.navegador.ConstruirTabela(seletorTabela, classeLinha, colunaList);
+
+            int indice = lista.FindIndex(e => (e.Colunas[0].ValorColuna == nomeJogador && e.Colunas[1].ValorColuna == overAll.ToString()));
+            this.navegador.Clicar(seletorColunaNome.Replace("<<indexLinha>>",(indice+1).ToString()));
         }
         public void FecharPagina()
         {
