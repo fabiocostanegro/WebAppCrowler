@@ -22,8 +22,7 @@ namespace CrowlerFramework
         public string RetornarTexto(string seletorCSS);
         public string RetornarTabela(string seletorCSS);
         public int RetornarQuantidadeItensTabela(string seletorCSS);
-
-        public List<List<string>> ConstruirTabela(string seletorTabela, string seletorItens, List<string> seletorColunas);
+        public List<ItensTabela> ConstruirTabela(string pSeletorTabela, List<string> pClasseLinha, List<int> pIndiceInicioLinha, int pIncrementoLinha, List<Coluna> pColunas);
 
     }
 }

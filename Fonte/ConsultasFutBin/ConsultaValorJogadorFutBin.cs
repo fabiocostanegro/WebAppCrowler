@@ -1,4 +1,5 @@
-﻿using Fonte.Consultas.ConsultaValorJogador;
+﻿using CrowlerFramework;
+using Fonte.Consultas.ConsultaValorJogador;
 using Fonte.ConsultasWebApp.ConsultarValorJogador;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,16 @@ namespace Fonte.ConsultasFutBin
 {
     public class ConsultaValorJogadorFutBin: Futbin
     {
+        public enum TipoJogadorTrade
+        {
+            OuroNaoRaroMaisCaro = 1,
+            Populares,
+            Forragem84,
+            Forragem85,
+            Forragem86,
+            Forragem87,
+            Forragem88,
+        }
         public ConsultaValorJogadorFutBin(FonteBase.Framework framework, string caminhoProfile) : base(framework, caminhoProfile)
         {
 
@@ -42,34 +53,53 @@ namespace Fonte.ConsultasFutBin
             
         }
         public void ConsultarHistoricoVendasJogadorFutbin(string url)
+        {  
+
+        }
+        public List<ItensTabela> ConsultarJogadoresPorTipo(TipoJogadorTrade tipoJogador)
         {
+            string url = ObterUrlPorTipoJogadorTrade(tipoJogador);
             base.AcessarFutbin(url);
-            string seletorTabela = ".row.w-100.pt-1.main-row.px-3.text-center";
-            string seletorItens = ".row.w-100.pt-1.main-row.px-3.text-center";
-            List<string> seletorColunas = new List<string>();    
-            seletorColunas.Add(".col-md-3.text-left.py-1.col-12");
-            seletorColunas.Add("body > div.site-sales-page > div.container.pb-5 > div:nth-child(2) > div.col-md-9 > div.row.left-area-row-top.w-100.sales-holder.text-center.justify-content-center.sales-block.z-depth-1 > div > div.sales-inner.col-12.text-left.px-0 > div:nth-child(1) > div:nth-child(2)");
-            this.navegador.ConstruirTabela(seletorTabela, seletorItens, seletorColunas);
-            /*
-            IWebElement element = driver.FindElement(By.CssSelector(".row.w-100.pt-1.main-row.px-3.text-center"));
-            ReadOnlyCollection<IWebElement> tabelaHistoricoVenda = driver.FindElements(By.CssSelector(".row.w-100.pt-1.main-row.px-3.text-center"));
-            for (int i = 0; i < tabelaHistoricoVenda.Count; i++)
+            string seletorTabela = "#repTb";
+            string seletorLinha = "#repTb > tbody > tr:nth-child(<<indexLinha>>)";
+            string seletorColunaNome = "#repTb > tbody > tr:nth-child(<<indexLinha>>) > td.table-row-text.row > div.d-inline.pt-2.pl-3 > div:nth-child(1) > a";
+            string seletorColunaValor = "#repTb > tbody > tr:nth-child(<<indexLinha>>) > td:nth-child(6) > span";
+            List<Coluna> colunaList = new List<Coluna>();
+            colunaList.Add(new Coluna(seletorColunaNome, "NomeJogador"));
+            colunaList.Add(new Coluna(seletorColunaValor, "ValorJogador"));
+            List<string> listaSeletores = new List<string>();
+            listaSeletores.Add("player_tr_1");
+            listaSeletores.Add("player_tr_2");
+
+            List<int> listaIndexLinha = new List<int>();
+            listaIndexLinha.Add(1);
+            listaIndexLinha.Add(3);
+
+            return base.ConsultarListaJogadoresTrade(seletorTabela, seletorLinha, listaSeletores, listaIndexLinha, 4, colunaList);
+
+
+        }
+        private string ObterUrlPorTipoJogadorTrade(TipoJogadorTrade tipoJogador)
+        {
+            switch (tipoJogador)
             {
-                string dataHistorico = tabelaHistoricoVenda[i].FindElement(By.CssSelector(".col-md-3.text-left.py-1.col-12")).Text;
-                ReadOnlyCollection<IWebElement> precos = tabelaHistoricoVenda[i].FindElements(By.CssSelector(".col-md-2.col-3"));
-                string elementoBinOrBid = tabelaHistoricoVenda[i].FindElement(By.CssSelector(".col-md-1.col-1.text-right")).GetAttribute("innerHTML");
-                int listadoPor = Convert.ToInt32(precos[0].Text.Replace(",", ""));
-                if (listadoPor == 0)
-                    break;
-                int vendidoPor = Convert.ToInt32(precos[1].Text.Replace(",", ""));
-                string tipoVenda = "";
-                if (vendidoPor != 0)
-                    tipoVenda = elementoBinOrBid.Contains("BID") ? "BID" : "BIN";
-                DateTime dataHoraHistorico = ConverterDataHistoricoVenda(dataHistorico);
-                per.InserirHistoricoVendaJogador(item.IdJogador, listadoPor, vendidoPor, tipoVenda, dataHoraHistorico);
-
-            }*/
-
+                case TipoJogadorTrade.OuroNaoRaroMaisCaro:
+                    return "https://www.futbin.com/players?page=1&eUnt=1&order=desc&pos_type=all&sort=pc_price&version=gold_nr";
+                case TipoJogadorTrade.Populares:
+                    return "https://www.futbin.com/players?page=1&eUnt=1&order=desc&sort=likes";
+                case TipoJogadorTrade.Forragem84:
+                    return "https://www.futbin.com/players?page=1&player_rating=84-84&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem85:
+                    return "https://www.futbin.com/players?page=1&player_rating=85-85&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem86:
+                    return "https://www.futbin.com/players?page=1&player_rating=86-86&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem87:
+                    return "https://www.futbin.com/players?page=1&player_rating=87-87&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem88:
+                    return "https://www.futbin.com/players?page=1&player_rating=88-88&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                default:
+                    return string.Empty;
+            }
         }
 
     }

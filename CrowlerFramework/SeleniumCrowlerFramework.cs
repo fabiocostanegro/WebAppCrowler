@@ -14,31 +14,21 @@ namespace CrowlerFramework
 {
     public class SeleniumCrowlerFramework : ICrowlerFramework, IDisposable
     {
-        private IWebDriver driver;
+        protected IWebDriver driver;
         private WebDriverWait wait;
         public SeleniumCrowlerFramework(string pCaminhoProfile, int quantidadeTempoSegundosMaximoEspera)
         {
-            ChromeOptions options = new ChromeOptions();
-            options.AddArgument(pCaminhoProfile);
-            //options.AddArgument("--headless");
-
-            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0", options);
+            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0", RetornarOptionsAntiCaptcha(pCaminhoProfile));
             TimeSpan tempo = new TimeSpan(0, 0, quantidadeTempoSegundosMaximoEspera);
             wait = new WebDriverWait(driver, tempo);
         }
         public SeleniumCrowlerFramework(string pCaminhoProfile)
         {
-            ChromeOptions options = new ChromeOptions();
-            options.AddArgument(pCaminhoProfile);
-
-            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0",options);
+            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0",RetornarOptionsAntiCaptcha(pCaminhoProfile));
         }
         public SeleniumCrowlerFramework()
         {
-            ChromeOptions options = new ChromeOptions();
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
-            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0", options);
+            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0", RetornarOptionsAntiCaptcha(string.Empty));
         }
 
         public void AcessarPagina(string url)
@@ -148,21 +138,33 @@ namespace CrowlerFramework
             IWebElement element = driver.FindElement(By.CssSelector(seletorCSS));
             return element.Text;
         }
-        public List<List<string>> ConstruirTabela(string seletorTabela, string seletorItens, List<string> seletorColunas)
+        public List<ItensTabela> ConstruirTabela(string pSeletorTabela, List<string> pClasseLinha, List<int> pIndiceInicioLinha, int pIncrementoLinha, List<Coluna> pColunas)
         {
-            IWebElement elementoTabela = driver.FindElement(By.CssSelector(seletorTabela));
-            ReadOnlyCollection<IWebElement> elementoItens = driver.FindElements(By.CssSelector(seletorItens));
-            List<List<string>> tabela = new List<List<string>>();
-            for (int i = 0; i < elementoItens.Count; i++)
+            Table tabela = new Table(pSeletorTabela, pColunas);
+            List<ItensTabela> ItensList = new List<ItensTabela>();
+            IWebElement elementoTabela = driver.FindElement(By.CssSelector(pSeletorTabela));
+            
+            ReadOnlyCollection<IWebElement> elementoItens = new ReadOnlyCollection<IWebElement>(new List<IWebElement>());
+            for (int i=0; i<pClasseLinha.Count; i++)
             {
-                List<string> coluna = new List<string>();
-                for(int j=0;j<seletorColunas.Count; j++)
+                elementoItens = elementoTabela.FindElements(By.ClassName(pClasseLinha[i]));
+                int indiceLinha = pIndiceInicioLinha[i];
+                string seletorColunaTemp = string.Empty;
+                for (int j = 0; j < elementoItens.Count; j++)
                 {
-                    string valorColuna = elementoItens[i].FindElement(By.CssSelector(seletorColunas[j])).Text;
-                    coluna.Add(valorColuna);
+                    ItensList.Add(new ItensTabela());
+                    for (int k=0;k<pColunas.Count;k++)
+                    {
+                        seletorColunaTemp = pColunas[k].SeletorColuna.Replace("<<indexLinha>>", indiceLinha.ToString());
+                        Coluna colunaTemp = new Coluna(pColunas[k].SeletorColuna, pColunas[k].NomeColuna);
+                        colunaTemp.ValorColuna = elementoItens[j].FindElement(By.CssSelector(seletorColunaTemp)).Text;
+                        ItensList[ItensList.Count - 1].Colunas.Add(colunaTemp);
+                    }
+                    indiceLinha = indiceLinha + pIncrementoLinha;
                 }
             }
-            return tabela;
+            
+            return ItensList;
         }
         public int RetornarQuantidadeItensTabela(string seletorCSS)
         {
@@ -175,6 +177,32 @@ namespace CrowlerFramework
             {
                 throw;
             }
+        }
+        private string RetornaUserAgent()
+        {
+            Random r = new Random();
+            int rInt = r.Next(0, 4);
+            List<string> lista = new List<string>();
+            lista.Add("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+            lista.Add("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+            lista.Add("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36");
+            lista.Add("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+            lista.Add("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36");
+            return lista[rInt];
+
+        }
+        private ChromeOptions RetornarOptionsAntiCaptcha(string pCaminhoProfile)
+        {
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument(pCaminhoProfile);
+            options.PageLoadStrategy = PageLoadStrategy.Eager;
+            options.AddArgument("--user-agent=" + RetornaUserAgent());
+            options.AddArgument("--disable-blink-features");
+            options.AddArgument("--disable-blink-features=AutomationControlled");
+            options.AddExcludedArguments(new List<string>() { "enable-automation" });
+            options.AddArgument("--no-sandbox");
+            options.AddArgument("--disable-dev-shm-usage");
+            return options;
         }
     }
 }
