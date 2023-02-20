@@ -24,8 +24,24 @@ namespace WebAppCrowler
 
             ConsultaValorJogadorFutBin consulta = new ConsultaValorJogadorFutBin(Fonte.FonteBase.Framework.Selenium, caminhoProfile);
 
-            List<ItensTabela> lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroNaoRaroMaisCaro);
+            if (req.Query["tipo"] == string.Empty)
+                return new BadRequestObjectResult("Parametros invalidos");
 
+            List<ItensTabela> lista = new List<ItensTabela>();
+            if (req.Query["tipo"] == "OuroNaoRaroMaisCaro")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroNaoRaroMaisCaro);
+            else if (req.Query["tipo"] == "Populares")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares);
+            else if (req.Query["tipo"] == "Forragem84")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem84);
+            else if (req.Query["tipo"] == "Forragem85")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem85);
+            else if (req.Query["tipo"] == "Forragem86")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem86);
+            else if (req.Query["tipo"] == "Forragem87")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem87);
+            else if (req.Query["tipo"] == "Forragem88")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem88);
             return new OkObjectResult(lista);
         }
     }

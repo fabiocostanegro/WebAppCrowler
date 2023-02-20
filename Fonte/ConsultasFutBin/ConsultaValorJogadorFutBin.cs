@@ -12,6 +12,12 @@ namespace Fonte.ConsultasFutBin
         public enum TipoJogadorTrade
         {
             OuroNaoRaroMaisCaro = 1,
+            Populares,
+            Forragem84,
+            Forragem85,
+            Forragem86,
+            Forragem87,
+            Forragem88,
         }
         public ConsultaValorJogadorFutBin(FonteBase.Framework framework, string caminhoProfile) : base(framework, caminhoProfile)
         {
@@ -79,6 +85,18 @@ namespace Fonte.ConsultasFutBin
             {
                 case TipoJogadorTrade.OuroNaoRaroMaisCaro:
                     return "https://www.futbin.com/players?page=1&eUnt=1&order=desc&pos_type=all&sort=pc_price&version=gold_nr";
+                case TipoJogadorTrade.Populares:
+                    return "https://www.futbin.com/players?page=1&eUnt=1&order=desc&sort=likes";
+                case TipoJogadorTrade.Forragem84:
+                    return "https://www.futbin.com/players?page=1&player_rating=84-84&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem85:
+                    return "https://www.futbin.com/players?page=1&player_rating=85-85&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem86:
+                    return "https://www.futbin.com/players?page=1&player_rating=86-86&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem87:
+                    return "https://www.futbin.com/players?page=1&player_rating=87-87&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
+                case TipoJogadorTrade.Forragem88:
+                    return "https://www.futbin.com/players?page=1&player_rating=88-88&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
                 default:
                     return string.Empty;
             }
