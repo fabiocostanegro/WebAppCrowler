@@ -32,15 +32,21 @@ namespace WebAppCrowler
         }
         private static List<ItensTabela> ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade tipo)
         {
-            string caminhoProfile = "user-data-dir=C:\\Users\\55319\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 3";
-
-            ConsultaValorJogadorFutBin consulta = new ConsultaValorJogadorFutBin(Fonte.FonteBase.Framework.Selenium, caminhoProfile);
-
             List<ItensTabela> lista = new List<ItensTabela>();
+            try
+            {
+                string caminhoProfile = "user-data-dir=C:\\Users\\55319\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 3";
 
-            lista = consulta.ConsultarJogadoresPorTipo(tipo);
+                ConsultaValorJogadorFutBin consulta = new ConsultaValorJogadorFutBin(Fonte.FonteBase.Framework.Selenium, caminhoProfile);
 
+                lista = consulta.ConsultarJogadoresPorTipo(tipo);
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
             return lista;
+            
         }
         private static List<JogadorValorMercadoAtual> ConsultaPrecoWebApp(List<ItensTabela> listaJogadores, ConsultaValorJogadorFutBin.TipoJogadorTrade tipo) 
         {
@@ -51,16 +57,17 @@ namespace WebAppCrowler
             ConsultaValorJogadorWebApp consulta = new ConsultaValorJogadorWebApp(Fonte.FonteBase.Framework.Selenium, caminhoProfile, 30);
             List<JogadorPrecoPrevisto> lista = new List<JogadorPrecoPrevisto>();
             int incrementoValor = RetornaIncrementoValorJogador(tipo);
+            int valorMaximo = RetornaIncrementoValorMaximo(tipo);
             foreach (ItensTabela item in listaJogadores)
             {
                 string nome = item.Colunas[0].ValorColuna;
                 int overAll = Convert.ToInt32(item.Colunas[2].ValorColuna);
                 string versao = item.Colunas[3].ValorColuna;
                 int valor = Util.FormatarValorJogador(item.Colunas[1].ValorColuna);
-                lista.Add(new JogadorPrecoPrevisto(nome, overAll, versao, valor, incrementoValor, 0));
+                lista.Add(new JogadorPrecoPrevisto(nome, overAll, versao, valor, incrementoValor, 0,valorMaximo));
             }
             List<JogadorValorMercadoAtual> listaValor = consulta.ConsultarValorJogador(lista, 30);
-            return null;
+            return listaValor;
         }
         private static int RetornaIncrementoValorJogador(ConsultaValorJogadorFutBin.TipoJogadorTrade tipo)
         {
@@ -70,6 +77,16 @@ namespace WebAppCrowler
                     return 1000;
                 default:
                     return 500;
+            }
+        }
+        private static int RetornaIncrementoValorMaximo(ConsultaValorJogadorFutBin.TipoJogadorTrade tipo)
+        {
+            switch (tipo)
+            {
+                case ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares:
+                    return 100000;
+                default:
+                    return 10000;
             }
         }
 

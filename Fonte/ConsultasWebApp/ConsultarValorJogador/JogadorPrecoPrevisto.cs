@@ -12,7 +12,8 @@ namespace Fonte.Consultas.ConsultaValorJogador
         public Int32 ValorMinimoPrevisto;
         public int IncrementoValor;
         public int IndiceJogador;
-        public JogadorPrecoPrevisto(string pNomeJogador, int pOverAll, string pVersao, Int32 pValorMinimoPrevisto, int pIncrementoValor, int indiceJogador)
+        public Int32 ValorMaximo;
+        public JogadorPrecoPrevisto(string pNomeJogador, int pOverAll, string pVersao, Int32 pValorMinimoPrevisto, int pIncrementoValor, int indiceJogador, int valorMaximo)
         {
             NomeJogador = pNomeJogador;
             OverAll = pOverAll;
@@ -20,6 +21,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
             ValorMinimoPrevisto = pValorMinimoPrevisto;
             IncrementoValor = pIncrementoValor;
             IndiceJogador = indiceJogador;
+            ValorMaximo = valorMaximo;
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
 
             ConsultarJogadorOverAll(jogador.NomeJogador, jogador.OverAll);
             bool achouJogador = ConsultarValorJogador(valorAtualMercado);
-            while(achouJogador) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
+            while(achouJogador && valorAtualMercado < jogador.ValorMaximo) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
             {
                 VoltarTelaPesquisa();
                 valorAtualMercado = valorAtualMercado - jogador.IncrementoValor;
@@ -81,7 +81,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
                 }
             }
 
-            while (!achouJogador)
+            while (!achouJogador && valorAtualMercado < jogador.ValorMaximo)
             {
                 VoltarTelaPesquisa();
                 valorAtualMercado = valorAtualMercado + jogador.IncrementoValor;

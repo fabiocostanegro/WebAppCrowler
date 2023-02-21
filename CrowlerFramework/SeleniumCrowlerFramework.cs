@@ -18,13 +18,17 @@ namespace CrowlerFramework
         private WebDriverWait wait;
         public SeleniumCrowlerFramework(string pCaminhoProfile, int quantidadeTempoSegundosMaximoEspera)
         {
-            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0", RetornarOptionsAntiCaptcha(pCaminhoProfile));
+            //driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0", RetornarOptionsAntiCaptcha(pCaminhoProfile));
+            driver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), RetornarOptionsAntiCaptcha(pCaminhoProfile), TimeSpan.FromMinutes(3));
+            driver.Manage().Timeouts().PageLoad.Add(System.TimeSpan.FromSeconds(30));
             TimeSpan tempo = new TimeSpan(0, 0, quantidadeTempoSegundosMaximoEspera);
             wait = new WebDriverWait(driver, tempo);
         }
         public SeleniumCrowlerFramework(string pCaminhoProfile)
         {
-            driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0",RetornarOptionsAntiCaptcha(pCaminhoProfile));
+            //driver = new ChromeDriver(@"C:\Labs\WebAppCrowler\WebAppCrowler\bin\Debug\net6.0",RetornarOptionsAntiCaptcha(pCaminhoProfile));
+            driver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), RetornarOptionsAntiCaptcha(pCaminhoProfile), TimeSpan.FromMinutes(3));
+            driver.Manage().Timeouts().PageLoad.Add(System.TimeSpan.FromSeconds(30));
         }
         public SeleniumCrowlerFramework()
         {
@@ -223,6 +227,7 @@ namespace CrowlerFramework
             ChromeOptions options = new ChromeOptions();
             options.AddArgument(pCaminhoProfile);
             options.PageLoadStrategy = PageLoadStrategy.Eager;
+            //options.AddArgument("--headless");
             options.AddArgument("--user-agent=" + RetornaUserAgent());
             options.AddArgument("--disable-blink-features");
             options.AddArgument("--disable-blink-features=AutomationControlled");

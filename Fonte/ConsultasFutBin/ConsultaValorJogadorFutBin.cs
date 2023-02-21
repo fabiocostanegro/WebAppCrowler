@@ -59,6 +59,7 @@ namespace Fonte.ConsultasFutBin
         public List<ItensTabela> ConsultarJogadoresPorTipo(TipoJogadorTrade tipoJogador)
         {
             string url = ObterUrlPorTipoJogadorTrade(tipoJogador);
+            //base.AcessarFutbin("https://www.futbin.com",true);
             base.AcessarFutbin(url);
             string seletorTabela = "#repTb";
             string seletorColunaNome = "#repTb > tbody > tr:nth-child(<<indexLinha>>) > td.table-row-text.row > div.d-inline.pt-2.pl-3 > div:nth-child(1) > a";
