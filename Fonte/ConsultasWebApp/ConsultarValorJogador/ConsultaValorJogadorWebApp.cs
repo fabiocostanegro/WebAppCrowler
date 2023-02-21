@@ -49,7 +49,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
                 {
                     Int32 valorMercadoAtual = ConsultarJogador(item, qtdMinutosRestantesMinimo);
                     Console.WriteLine("Jogador " + item.NomeJogador + " consultado com sucesso");
-                    listaValorMercado.Add(new JogadorValorMercadoAtual(item.NomeJogador, valorMercadoAtual));
+                    listaValorMercado.Add(new JogadorValorMercadoAtual(item.NomeJogador, valorMercadoAtual,item.OverAll));
                     LimparCamposConsulta();
                 }
                 catch(Exception ex)
@@ -129,7 +129,13 @@ namespace Fonte.Consultas.ConsultaValorJogador
             this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.button-container > button.btn-standard.call-to-action");
             this.navegador.EsperarCarregamento(2000);
             if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
-                return true;
+            {
+                string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
+                if (!(textoTempo.Contains("Horas") || textoTempo.Contains("Hours")))
+                    return true;
+                else
+                    return false;
+            }
             return false;
 
         }
@@ -179,7 +185,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
             
             List<ItensTabela> lista = this.navegador.ConstruirTabela(seletorTabela, classeLinha, colunaList);
 
-            int indice = lista.FindIndex(e => (e.Colunas[0].ValorColuna == nomeJogador && e.Colunas[1].ValorColuna == overAll.ToString()));
+            int indice = lista.FindIndex(e => (e.Colunas[1].ValorColuna == overAll.ToString()));
             this.navegador.Clicar(seletorColunaNome.Replace("<<indexLinha>>",(indice+1).ToString()));
         }
         public void FecharPagina()

@@ -25,8 +25,8 @@ namespace WebAppCrowler
             if (req.Query["tipo"] == string.Empty)
                 return new BadRequestObjectResult("Parametros invalidos");
 
-            List<ItensTabela> listaJogadoresTrade = ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroNaoRaroMaisCaro);
-            List<JogadorValorMercadoAtual> listaPrecoAtual = ConsultaPrecoWebApp(listaJogadoresTrade, ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroNaoRaroMaisCaro);
+            List<ItensTabela> listaJogadoresTrade = ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k);
+            List<JogadorValorMercadoAtual> listaPrecoAtual = ConsultaPrecoWebApp(listaJogadoresTrade, ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k);
 
             return new OkObjectResult(listaPrecoAtual);
         }
@@ -75,8 +75,12 @@ namespace WebAppCrowler
             {
                 case ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares:
                     return 1000;
-                default:
+                case ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k:
+                    return 2000;
+                case ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroNaoRaroMaisCaro:
                     return 500;
+                default:
+                    return 1000;
             }
         }
         private static int RetornaIncrementoValorMaximo(ConsultaValorJogadorFutBin.TipoJogadorTrade tipo)
@@ -85,6 +89,8 @@ namespace WebAppCrowler
             {
                 case ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares:
                     return 100000;
+                case ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k:
+                    return 120000;
                 default:
                     return 10000;
             }

@@ -42,6 +42,8 @@ namespace WebAppCrowler
                 lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem87);
             else if (req.Query["tipo"] == "Forragem88")
                 lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem88);
+            else if (req.Query["tipo"] == "Icon100k")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k);
             return new OkObjectResult(lista);
         }
     }
