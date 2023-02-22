@@ -29,7 +29,7 @@ namespace WebAppCrowler
 
             ConsultaValorJogadorWebApp consulta = new ConsultaValorJogadorWebApp(Fonte.FonteBase.Framework.Selenium, caminhoProfile, 30);
             List<JogadorPrecoPrevisto> lista = new List<JogadorPrecoPrevisto>();
-            lista.Add(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["overall"]), req.Query["versao"], Convert.ToInt32(req.Query["val"]), Convert.ToInt32(req.Query["inc"]), Convert.ToInt32(req.Query["index"]), Convert.ToInt32(req.Query["valMax"])));
+            lista.Add(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["overall"]), req.Query["versao"], Convert.ToInt32(req.Query["val"]), Convert.ToInt32(req.Query["inc"]), Convert.ToInt32(req.Query["index"]), Convert.ToInt32(req.Query["valMax"]),0));
             List<JogadorValorMercadoAtual> listaValor = consulta.ConsultarValorJogador(lista, 30);
             return new OkObjectResult(listaValor);
         }

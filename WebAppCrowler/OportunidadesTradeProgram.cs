@@ -24,11 +24,14 @@ namespace WebAppCrowler
         {
             if (req.Query["tipo"] == string.Empty)
                 return new BadRequestObjectResult("Parametros invalidos");
-
+            
+            double lucroPercentual = 10;
+            
             List<ItensTabela> listaJogadoresTrade = ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k);
             List<JogadorValorMercadoAtual> listaPrecoAtual = ConsultaPrecoWebApp(listaJogadoresTrade, ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k);
-
-            return new OkObjectResult(listaPrecoAtual);
+            List<JogadorPrecoPrevisto> listaOportunidades = RetornarListaConsultaOportunidades(listaPrecoAtual,lucroPercentual);
+            List<JogadoresLance> listaOportunidadesLance = ConsultarOportunidadesLance(listaOportunidades);
+            return new OkObjectResult(listaOportunidadesLance);
         }
         private static List<ItensTabela> ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade tipo)
         {
@@ -64,10 +67,22 @@ namespace WebAppCrowler
                 int overAll = Convert.ToInt32(item.Colunas[2].ValorColuna);
                 string versao = item.Colunas[3].ValorColuna;
                 int valor = Util.FormatarValorJogador(item.Colunas[1].ValorColuna);
-                lista.Add(new JogadorPrecoPrevisto(nome, overAll, versao, valor, incrementoValor, 0,valorMaximo));
+                lista.Add(new JogadorPrecoPrevisto(nome, overAll, versao, valor, incrementoValor, 0,valorMaximo,0));
             }
             List<JogadorValorMercadoAtual> listaValor = consulta.ConsultarValorJogador(lista, 30);
             return listaValor;
+        }
+        private static List<JogadoresLance> ConsultarOportunidadesLance(List<JogadorPrecoPrevisto> lista)
+        {
+            string caminhoProfile = "user-data-dir=C:\\Users\\55319\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 3";
+
+            ConsultaValorJogadorWebApp consulta = new ConsultaValorJogadorWebApp(Fonte.FonteBase.Framework.Selenium, caminhoProfile, 30);
+
+            List<JogadoresLance> qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(lista);
+
+            consulta.FecharPagina();
+            
+            return qtdJogadoreslance;
         }
         private static int RetornaIncrementoValorJogador(ConsultaValorJogadorFutBin.TipoJogadorTrade tipo)
         {
@@ -94,6 +109,18 @@ namespace WebAppCrowler
                 default:
                     return 10000;
             }
+        }
+        private static List<JogadorPrecoPrevisto> RetornarListaConsultaOportunidades(List<JogadorValorMercadoAtual> listaJogadores, double percentualLucro)
+        {
+            List<JogadorPrecoPrevisto> listaOportunidades = new List<JogadorPrecoPrevisto>();
+            foreach (JogadorValorMercadoAtual item in listaJogadores)
+            {
+                double perc = percentualLucro / 100;
+                double valorPerc = Convert.ToDouble(item.ValorAtualMercado) * perc;
+                double valorConsulta = Convert.ToDouble(item.ValorAtualMercado) - valorPerc;
+                listaOportunidades.Add(new JogadorPrecoPrevisto(item.NomeJogador, item.Overall,"", 0, 0, 0, Convert.ToInt32(valorConsulta),item.ValorAtualMercado));
+            }
+            return listaOportunidades;
         }
 
     }

@@ -28,7 +28,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
             return ConsultarValorAtualJogador(listaJogadores, qtdMinutosRestantesMinimo);
 
         }
-        public JogadoresLance ConsultarExisteJogadorLance(JogadorPrecoPrevisto jogador)
+        public List<JogadoresLance> ConsultarExisteJogadorLance(List<JogadorPrecoPrevisto> jogador)
         {
             Console.WriteLine("Iniciando acesso ao WebAPP");
             base.AcessarWebAPP();
@@ -96,11 +96,18 @@ namespace Fonte.Consultas.ConsultaValorJogador
             this.navegador.ApagarTexto(cssValorJogador);
             this.navegador.ApagarTexto(cssNomeJogador);
         }
+        private void LimparCamposConsultaLance()
+        {
+            this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.search-prices > div:nth-child(1) > button");
+            this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input > div > div.ut-player-search-control--input-container > button");
+        }
         private void VoltarTelaPesquisa()
         {
             this.navegador.Clicar("body > main > section > section > div.ut-navigation-bar-view.navbar-style-landscape > button.ut-navigation-button-control", cssValorJogador);
 
             this.navegador.ApagarTexto(cssValorJogador);
+            this.navegador.ApagarTexto(cssNomeJogador);
+
         }
 
         private bool ConsultarValorJogador(int valorJogador, int qtdMinutosRestantesMinimo)
@@ -139,35 +146,43 @@ namespace Fonte.Consultas.ConsultaValorJogador
             return false;
 
         }
-        private JogadoresLance ConsultarValorJogadorLance(JogadorPrecoPrevisto jogador)
+        private List<JogadoresLance> ConsultarValorJogadorLance(List<JogadorPrecoPrevisto> listaJogador)
         {
-            this.ConsultarJogador(jogador.NomeJogador, jogador.IndiceJogador);
-            this.navegador.DigitarTexto(cssValorLanceMaximoJogador, jogador.ValorMinimoPrevisto.ToString());
-            this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.button-container > button.btn-standard.call-to-action");
-            this.navegador.EsperarCarregamento(2000);
-            if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
+
+            List<JogadoresLance> listaValorMercado = new List<JogadoresLance>();
+            foreach (JogadorPrecoPrevisto item in listaJogador)
             {
-                string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
-                if (!textoTempo.Contains("Horas"))
-                    return new JogadoresLance(jogador.NomeJogador,this.navegador.RetornarQuantidadeItensTabela("listFUTItem"));
-                else
-                    return new JogadoresLance(jogador.NomeJogador, 0);
+                Console.WriteLine("Consultando jogador " + item.NomeJogador);
+                try
+                {
+                    this.ConsultarJogadorOverAll(item.NomeJogador, item.OverAll);
+                    this.navegador.DigitarTexto(cssValorLanceMaximoJogador, item.ValorMaximo.ToString());
+                    this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.button-container > button.btn-standard.call-to-action");
+                    this.navegador.EsperarCarregamento(2000);
+                    if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
+                    {
+                        string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
+                        if (!textoTempo.Contains("Horas"))
+                            listaValorMercado.Add(new JogadoresLance(item.NomeJogador, this.navegador.RetornarQuantidadeItensTabela("listFUTItem"), item.OverAll, item.ValorAtualMercado,item.ValorMaximo));
+                    }
+                    VoltarTelaPesquisa();
+                    LimparCamposConsultaLance();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Erro ao consultar o jogador: " + item.NomeJogador);
+                    LimparCamposConsultaLance();
+                }
             }
-            return new JogadoresLance(jogador.NomeJogador, 0);
+            this.navegador.FecharPagina();
+            return listaValorMercado;
+            
         }
         private void ConsultarJogador(string nomeJogador)
         {
             string cssSelectorBoxPesquisa = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list > ul > button > span.btn-text";
             this.navegador.DigitarTexto(cssNomeJogador, cssSelectorBoxPesquisa, nomeJogador);
             this.navegador.Clicar(cssSelectorBoxPesquisa);
-        }
-        private void ConsultarJogador(string nomeJogador, int index)
-        {
-            string cssSeletorJogador = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.is-open.has-selection.contract-text-input > div > div.inline-list > ul > button:nth-child(" + index + ") > span.btn-text";
-            string cssSelectorBoxPesquisa = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list > ul > button > span.btn-text";
-            
-            this.navegador.DigitarTexto(cssNomeJogador, cssSelectorBoxPesquisa, nomeJogador);
-            this.navegador.Clicar(cssSeletorJogador);
         }
         private void ConsultarJogadorOverAll(string nomeJogador, int overAll)
         {

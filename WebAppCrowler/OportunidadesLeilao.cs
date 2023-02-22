@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Fonte.Consultas.ConsultaValorJogador;
 using Fonte.ConsultasWebApp.ConsultarValorJogador;
+using System.Collections.Generic;
 
 namespace WebAppCrowler
 {
@@ -27,7 +28,10 @@ namespace WebAppCrowler
             string caminhoProfile = "user-data-dir=C:\\Users\\55319\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 3";
 
             ConsultaValorJogadorWebApp consulta = new ConsultaValorJogadorWebApp(Fonte.FonteBase.Framework.Selenium, caminhoProfile, 30);
-            JogadoresLance qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["overall"]), req.Query["versao"], Convert.ToInt32(req.Query["val"]), 0, Convert.ToInt32(req.Query["index"]), Convert.ToInt32(req.Query["valMax"])));
+
+            List<JogadorPrecoPrevisto> lista = new List<JogadorPrecoPrevisto>();
+            lista.Add(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["overall"]), req.Query["versao"], Convert.ToInt32(req.Query["val"]), 0, Convert.ToInt32(req.Query["index"]), Convert.ToInt32(req.Query["valMax"]),0));
+            List<JogadoresLance> qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(lista);
             
             responseMessage = "Existem " + qtdJogadoreslance + " jogadores com preço informado no lance";
             consulta.FecharPagina();

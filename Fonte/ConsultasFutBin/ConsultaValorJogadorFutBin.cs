@@ -103,7 +103,7 @@ namespace Fonte.ConsultasFutBin
                 case TipoJogadorTrade.Forragem88:
                     return "https://www.futbin.com/players?page=1&player_rating=88-88&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
                 case TipoJogadorTrade.Icon100k:
-                    return "https://www.futbin.com/players?page=1&pc_price=0-100000&pos_type=all&version=icons&sort=pc_price&order=desc";
+                    return "https://www.futbin.com/players?page=1&pc_price=0-100000&pos_type=all&sort=likes&order=desc&version=icons";
                 default:
                     return string.Empty;
             }
