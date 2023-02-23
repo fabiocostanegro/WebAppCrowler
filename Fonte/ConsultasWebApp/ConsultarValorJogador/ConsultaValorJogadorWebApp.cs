@@ -19,6 +19,18 @@ namespace Fonte.Consultas.ConsultaValorJogador
         }
         public List<JogadorValorMercadoAtual> ConsultarValorJogador(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo)
         {
+            try
+            {
+                return ConsultarValorJogadorWebApp(listaJogadores, qtdMinutosRestantesMinimo);
+            }
+            catch(Exception ex)
+            {
+                return ConsultarValorJogadorWebApp(listaJogadores, qtdMinutosRestantesMinimo);//retry...
+            }
+
+        }
+        private List<JogadorValorMercadoAtual> ConsultarValorJogadorWebApp(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo)
+        {
             Console.WriteLine("Iniciando acesso ao WebAPP");
             base.AcessarWebAPP();
             Console.WriteLine("WebApp acessado com sucesso");
@@ -26,9 +38,19 @@ namespace Fonte.Consultas.ConsultaValorJogador
             base.AcessarMenuTransferencias();
             Console.WriteLine("Menu de transferencia acessado com sucesso");
             return ConsultarValorAtualJogador(listaJogadores, qtdMinutosRestantesMinimo);
-
         }
         public List<JogadoresLance> ConsultarExisteJogadorLance(List<JogadorPrecoPrevisto> jogador)
+        {
+            try
+            {
+                return ConsultarExisteJogadorLanceWebApp(jogador);
+            }
+            catch
+            {
+                return ConsultarExisteJogadorLanceWebApp(jogador);//retry...
+            }
+        }
+        private List<JogadoresLance> ConsultarExisteJogadorLanceWebApp(List<JogadorPrecoPrevisto> jogador)
         {
             Console.WriteLine("Iniciando acesso ao WebAPP");
             base.AcessarWebAPP();
@@ -37,7 +59,6 @@ namespace Fonte.Consultas.ConsultaValorJogador
             base.AcessarMenuTransferencias();
             Console.WriteLine("Menu de transferencia acessado com sucesso");
             return ConsultarValorJogadorLance(jogador);
-
         }
         public List<JogadorValorMercadoAtual> ConsultarValorAtualJogador(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo)
         {
@@ -64,11 +85,13 @@ namespace Fonte.Consultas.ConsultaValorJogador
         private Int32 ConsultarJogador(JogadorPrecoPrevisto jogador, int qtdMinutosRestantesMinimo)
         {
             Int32 valorAtualMercado = jogador.ValorMinimoPrevisto;
-
+            int primeiroValorRetornado = 0;
             ConsultarJogadorOverAll(jogador.NomeJogador, jogador.OverAll);
             bool achouJogador = ConsultarValorJogador(valorAtualMercado);
             while(achouJogador && valorAtualMercado < jogador.ValorMaximo) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
             {
+                
+                primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div:nth-child(3) > span.currency-coins.value").Replace(",",""));
                 VoltarTelaPesquisa();
                 valorAtualMercado = valorAtualMercado - jogador.IncrementoValor;
                 if (valorAtualMercado < 0)
@@ -77,7 +100,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
                 if(!achouJogador)
                 {
                     VoltarTelaPesquisa();
-                    return valorAtualMercado + jogador.IncrementoValor; //ultimo valor achado
+                    return primeiroValorRetornado;
                 }
             }
 
@@ -87,8 +110,9 @@ namespace Fonte.Consultas.ConsultaValorJogador
                 valorAtualMercado = valorAtualMercado + jogador.IncrementoValor;
                 achouJogador = ConsultarValorJogador(valorAtualMercado);
             }
+            primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div:nth-child(3) > span.currency-coins.value").Replace(",",""));
             VoltarTelaPesquisa();
-            return valorAtualMercado;
+            return primeiroValorRetornado;
             
         }
         private void LimparCamposConsulta()
@@ -137,11 +161,13 @@ namespace Fonte.Consultas.ConsultaValorJogador
             this.navegador.EsperarCarregamento(2000);
             if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
             {
-                string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
+                return true;    
+                
+                /*string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
                 if (!(textoTempo.Contains("Horas") || textoTempo.Contains("Hours")))
                     return true;
                 else
-                    return false;
+                    return false;*/
             }
             return false;
 
@@ -161,9 +187,10 @@ namespace Fonte.Consultas.ConsultaValorJogador
                     this.navegador.EsperarCarregamento(2000);
                     if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
                     {
+                        int primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auctionStartPrice.auctionValue > span.currency-coins.value").Replace(",", ""));
                         string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
                         if (!textoTempo.Contains("Horas"))
-                            listaValorMercado.Add(new JogadoresLance(item.NomeJogador, this.navegador.RetornarQuantidadeItensTabela("listFUTItem"), item.OverAll, item.ValorAtualMercado,item.ValorMaximo));
+                            listaValorMercado.Add(new JogadoresLance(item.NomeJogador, this.navegador.RetornarQuantidadeItensTabela("listFUTItem"), item.OverAll, item.ValorAtualMercado, primeiroValorRetornado));
                     }
                     VoltarTelaPesquisa();
                     LimparCamposConsultaLance();
