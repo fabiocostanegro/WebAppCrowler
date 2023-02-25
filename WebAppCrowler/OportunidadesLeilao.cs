@@ -31,7 +31,7 @@ namespace WebAppCrowler
 
             List<JogadorPrecoPrevisto> lista = new List<JogadorPrecoPrevisto>();
             lista.Add(new JogadorPrecoPrevisto(req.Query["name"], Convert.ToInt32(req.Query["overall"]), req.Query["versao"], Convert.ToInt32(req.Query["val"]), 0, Convert.ToInt32(req.Query["index"]), Convert.ToInt32(req.Query["valMax"]),0));
-            List<JogadoresLance> qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(lista);
+            List<JogadorValorMercadoAtual> qtdJogadoreslance = consulta.ConsultarValorJogador(lista,30,2,ConsultaValorJogadorWebApp.TipoConsulta.BID);
             
             responseMessage = "Existem " + qtdJogadoreslance + " jogadores com preço informado no lance";
             consulta.FecharPagina();

@@ -9,6 +9,11 @@ namespace Fonte.Consultas.ConsultaValorJogador
 {
     public class ConsultaValorJogadorWebApp : WebApp
     {
+        public enum TipoConsulta
+        {
+            BID = 0,
+            BIN = 1
+        }
         public ConsultaValorJogadorWebApp(FonteBase.Framework framework, string caminhoProfile) : base(framework, caminhoProfile)
         {
 
@@ -17,50 +22,46 @@ namespace Fonte.Consultas.ConsultaValorJogador
         {
 
         }
-        public List<JogadorValorMercadoAtual> ConsultarValorJogador(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo)
+        public List<JogadorValorMercadoAtual> ConsultarValorJogador(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo, int qtdRetentativas, TipoConsulta tipoConsulta)
         {
-            try
+            bool sucesso = false;
+            int tentativas = 1;
+            Console.WriteLine("Iniciando acesso ao WebAPP");
+            base.AcessarWebAPP();
+            while (!sucesso)
             {
-                return ConsultarValorJogadorWebApp(listaJogadores, qtdMinutosRestantesMinimo);
+                try
+                {
+                    Console.WriteLine("WebApp acessado com sucesso");
+                    Console.WriteLine("Acessando menu de transferencias");
+                    base.AcessarMenuTransferencias();
+                    Console.WriteLine("Menu de transferencia acessado com sucesso");
+                    sucesso = true;
+                }
+                catch (Exception ex)
+                {
+                    if (tentativas <= qtdRetentativas)
+                    {
+                        ReiniciarFluxo();
+                        tentativas++;
+                    }
+                    else
+                        throw ex;
+                }
+                
             }
-            catch(Exception ex)
-            {
-                return ConsultarValorJogadorWebApp(listaJogadores, qtdMinutosRestantesMinimo);//retry...
-            }
+            return ConsultarValorAtualJogador(listaJogadores, qtdMinutosRestantesMinimo, qtdRetentativas, tipoConsulta);
 
         }
-        private List<JogadorValorMercadoAtual> ConsultarValorJogadorWebApp(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo)
+        private void ReiniciarFluxoPesquisa()
         {
-            Console.WriteLine("Iniciando acesso ao WebAPP");
-            base.AcessarWebAPP();
+            base.ReiniciarFluxo();
             Console.WriteLine("WebApp acessado com sucesso");
             Console.WriteLine("Acessando menu de transferencias");
             base.AcessarMenuTransferencias();
             Console.WriteLine("Menu de transferencia acessado com sucesso");
-            return ConsultarValorAtualJogador(listaJogadores, qtdMinutosRestantesMinimo);
         }
-        public List<JogadoresLance> ConsultarExisteJogadorLance(List<JogadorPrecoPrevisto> jogador)
-        {
-            try
-            {
-                return ConsultarExisteJogadorLanceWebApp(jogador);
-            }
-            catch
-            {
-                return ConsultarExisteJogadorLanceWebApp(jogador);//retry...
-            }
-        }
-        private List<JogadoresLance> ConsultarExisteJogadorLanceWebApp(List<JogadorPrecoPrevisto> jogador)
-        {
-            Console.WriteLine("Iniciando acesso ao WebAPP");
-            base.AcessarWebAPP();
-            Console.WriteLine("WebApp acessado com sucesso");
-            Console.WriteLine("Acessando menu de transferencias");
-            base.AcessarMenuTransferencias();
-            Console.WriteLine("Menu de transferencia acessado com sucesso");
-            return ConsultarValorJogadorLance(jogador);
-        }
-        public List<JogadorValorMercadoAtual> ConsultarValorAtualJogador(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo)
+        public List<JogadorValorMercadoAtual> ConsultarValorAtualJogador(List<JogadorPrecoPrevisto> listaJogadores, int qtdMinutosRestantesMinimo, int qtdRetentativas, TipoConsulta tipoConsulta)
         {
             List<JogadorValorMercadoAtual> listaValorMercado = new List<JogadorValorMercadoAtual>();
             foreach (JogadorPrecoPrevisto item in listaJogadores)
@@ -68,10 +69,38 @@ namespace Fonte.Consultas.ConsultaValorJogador
                 Console.WriteLine("Consultando jogador " + item.NomeJogador);
                 try
                 {
-                    Int32 valorMercadoAtual = ConsultarJogador(item, qtdMinutosRestantesMinimo);
-                    Console.WriteLine("Jogador " + item.NomeJogador + " consultado com sucesso");
-                    listaValorMercado.Add(new JogadorValorMercadoAtual(item.NomeJogador, valorMercadoAtual,item.OverAll));
-                    LimparCamposConsulta();
+                    bool sucesso = false;
+                    int tentativas = 1;
+                    while (!sucesso) // Politica de retentativas
+                    {
+                        Int32 valorMercadoAtual = 0;
+                        if (tipoConsulta == TipoConsulta.BIN)
+                            valorMercadoAtual = ConsultarJogador(item, qtdMinutosRestantesMinimo, out sucesso);
+                        else
+                            valorMercadoAtual = ConsultarValorJogadorLance(item, out sucesso);
+                        if (!sucesso)
+                        {
+                            if (tentativas <= qtdRetentativas)
+                            {
+                                ReiniciarFluxoPesquisa();
+                                tentativas++;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Jogador " + item.NomeJogador + " não foi consultado por erro no fluxo");
+                                ReiniciarFluxoPesquisa();
+                                break;
+                            }
+                        }
+                        if (valorMercadoAtual >= 0)
+                        {
+                            if(tipoConsulta == TipoConsulta.BID)
+                                listaValorMercado.Add(new JogadorValorMercadoAtual(item.NomeJogador, item.ValorAtualMercado, item.OverAll, valorMercadoAtual));
+                            else
+                                listaValorMercado.Add(new JogadorValorMercadoAtual(item.NomeJogador, valorMercadoAtual, item.OverAll));
+                        }
+                        LimparCamposConsulta();
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -82,37 +111,54 @@ namespace Fonte.Consultas.ConsultaValorJogador
             this.navegador.FecharPagina();
             return listaValorMercado;
         }
-        private Int32 ConsultarJogador(JogadorPrecoPrevisto jogador, int qtdMinutosRestantesMinimo)
+        private Int32 ConsultarJogador(JogadorPrecoPrevisto jogador, int qtdMinutosRestantesMinimo, out bool sucesso)
         {
-            Int32 valorAtualMercado = jogador.ValorMinimoPrevisto;
-            int primeiroValorRetornado = 0;
-            ConsultarJogadorOverAll(jogador.NomeJogador, jogador.OverAll);
-            bool achouJogador = ConsultarValorJogador(valorAtualMercado);
-            while(achouJogador && valorAtualMercado < jogador.ValorMaximo) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
+            sucesso = true;
+            try
             {
-                
-                primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div:nth-child(3) > span.currency-coins.value").Replace(",",""));
-                VoltarTelaPesquisa();
-                valorAtualMercado = valorAtualMercado - jogador.IncrementoValor;
-                if (valorAtualMercado < 0)
-                    throw new Exception();
-                achouJogador = ConsultarValorJogador(valorAtualMercado);
-                if(!achouJogador)
+                Int32 valorAtualMercado = jogador.ValorMinimoPrevisto;
+                int primeiroValorRetornado = 0;
+                bool achouJogador = ConsultarJogadorOverAll(jogador.NomeJogador, jogador.OverAll);
+                if(!achouJogador) //Não achou o jogador pelo nome
                 {
-                    VoltarTelaPesquisa();
+                    Console.WriteLine("Jogador " + jogador.NomeJogador + " não encontrado");
                     return primeiroValorRetornado;
                 }
-            }
-
-            while (!achouJogador && valorAtualMercado < jogador.ValorMaximo)
-            {
-                VoltarTelaPesquisa();
-                valorAtualMercado = valorAtualMercado + jogador.IncrementoValor;
                 achouJogador = ConsultarValorJogador(valorAtualMercado);
+                while (achouJogador && valorAtualMercado < jogador.ValorMaximo) //tratamento para quando o valor informado está acima do que o jogador vale de fato.
+                {
+
+                    primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div:nth-child(3) > span.currency-coins.value").Replace(",", ""));
+                    VoltarTelaPesquisa();
+                    valorAtualMercado = valorAtualMercado - jogador.IncrementoValor;
+                    if (valorAtualMercado < 0)
+                        sucesso = false;
+                    achouJogador = ConsultarValorJogador(valorAtualMercado);
+                    if (!achouJogador)
+                    {
+                        VoltarTelaPesquisa();
+                        return primeiroValorRetornado;
+                    }
+                }
+
+                while (!achouJogador && valorAtualMercado < jogador.ValorMaximo)
+                {
+                    VoltarTelaPesquisa();
+                    valorAtualMercado = valorAtualMercado + jogador.IncrementoValor;
+                    achouJogador = ConsultarValorJogador(valorAtualMercado);
+                }
+                if (achouJogador)
+                    primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div:nth-child(3) > span.currency-coins.value").Replace(",", ""));
+                else
+                    primeiroValorRetornado = 0;
+                VoltarTelaPesquisa();
+                return primeiroValorRetornado;
             }
-            primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div:nth-child(3) > span.currency-coins.value").Replace(",",""));
-            VoltarTelaPesquisa();
-            return primeiroValorRetornado;
+            catch
+            {
+                sucesso = false;
+                return 0;
+            }
             
         }
         private void LimparCamposConsulta()
@@ -172,37 +218,31 @@ namespace Fonte.Consultas.ConsultaValorJogador
             return false;
 
         }
-        private List<JogadoresLance> ConsultarValorJogadorLance(List<JogadorPrecoPrevisto> listaJogador)
+        private Int32 ConsultarValorJogadorLance(JogadorPrecoPrevisto item, out bool sucesso)
         {
-
-            List<JogadoresLance> listaValorMercado = new List<JogadoresLance>();
-            foreach (JogadorPrecoPrevisto item in listaJogador)
+            sucesso = true;
+            Int32 primeiroValorRetornado = 0;
+            try
             {
-                Console.WriteLine("Consultando jogador " + item.NomeJogador);
-                try
+                this.ConsultarJogadorOverAll(item.NomeJogador, item.OverAll);
+                this.navegador.DigitarTexto(cssValorLanceMaximoJogador, item.ValorMaximo.ToString());
+                this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.button-container > button.btn-standard.call-to-action");
+                this.navegador.EsperarCarregamento(2000);
+                if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
                 {
-                    this.ConsultarJogadorOverAll(item.NomeJogador, item.OverAll);
-                    this.navegador.DigitarTexto(cssValorLanceMaximoJogador, item.ValorMaximo.ToString());
-                    this.navegador.Clicar("body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.button-container > button.btn-standard.call-to-action");
-                    this.navegador.EsperarCarregamento(2000);
-                    if (this.navegador.ElementoExiste("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-navigation-container-view.ui-layout-right > div > div > div.DetailPanel > div.bidOptions > button.btn-standard.call-to-action.bidButton"))
-                    {
-                        int primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auctionStartPrice.auctionValue > span.currency-coins.value").Replace(",", ""));
-                        string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
-                        if (!textoTempo.Contains("Horas"))
-                            listaValorMercado.Add(new JogadoresLance(item.NomeJogador, this.navegador.RetornarQuantidadeItensTabela("listFUTItem"), item.OverAll, item.ValorAtualMercado, primeiroValorRetornado));
-                    }
-                    VoltarTelaPesquisa();
-                    LimparCamposConsultaLance();
+                    string textoTempo = this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auction-state > span.time");
+                    if (!textoTempo.Contains("Horas"))
+                        primeiroValorRetornado = Convert.ToInt32(this.navegador.RetornarTexto("body > main > section > section > div.ut-navigation-container-view--content > div > div > section.ut-pinned-list-container.SearchResults.ui-layout-left > div > ul > li.listFUTItem.has-auction-data.selected > div > div.auction > div.auctionStartPrice.auctionValue > span.currency-coins.value").Replace(",", ""));
+
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Erro ao consultar o jogador: " + item.NomeJogador);
-                    LimparCamposConsultaLance();
-                }
+                VoltarTelaPesquisa();
+                LimparCamposConsultaLance();
             }
-            this.navegador.FecharPagina();
-            return listaValorMercado;
+            catch (Exception ex)
+            {
+                sucesso = false;
+            }
+            return primeiroValorRetornado;
             
         }
         private void ConsultarJogador(string nomeJogador)
@@ -211,7 +251,7 @@ namespace Fonte.Consultas.ConsultaValorJogador
             this.navegador.DigitarTexto(cssNomeJogador, cssSelectorBoxPesquisa, nomeJogador);
             this.navegador.Clicar(cssSelectorBoxPesquisa);
         }
-        private void ConsultarJogadorOverAll(string nomeJogador, int overAll)
+        private bool ConsultarJogadorOverAll(string nomeJogador, int overAll)
         {
             string seletorTabela = "body > main > section > section > div.ut-navigation-container-view--content > div > div.ut-pinned-list-container.ut-content-container > div > div.ut-pinned-list > div.ut-item-search-view > div.inline-list-select.ut-player-search-control.has-selection.contract-text-input.is-open > div > div.inline-list";
 
@@ -228,7 +268,11 @@ namespace Fonte.Consultas.ConsultaValorJogador
             List<ItensTabela> lista = this.navegador.ConstruirTabela(seletorTabela, classeLinha, colunaList);
 
             int indice = lista.FindIndex(e => (e.Colunas[1].ValorColuna == overAll.ToString()));
-            this.navegador.Clicar(seletorColunaNome.Replace("<<indexLinha>>",(indice+1).ToString()));
+            if (indice == -1)
+                return false;
+            else
+                this.navegador.Clicar(seletorColunaNome.Replace("<<indexLinha>>", (indice + 1).ToString()));
+            return true;
         }
         public void FecharPagina()
         {

@@ -12,7 +12,7 @@ namespace Fonte.ConsultasFutBin
         public enum TipoJogadorTrade
         {
             OuroNaoRaroMaisCaro = 1,
-            Populares,
+            OuroPopulares100k,
             Forragem84,
             Forragem85,
             Forragem86,
@@ -90,8 +90,8 @@ namespace Fonte.ConsultasFutBin
             {
                 case TipoJogadorTrade.OuroNaoRaroMaisCaro:
                     return "https://www.futbin.com/players?page=1&eClubs=479&eUnt=1&order=desc&pos_type=all&sort=pc_price&version=gold_nr";
-                case TipoJogadorTrade.Populares:
-                    return "https://www.futbin.com/players?page=1&eUnt=1&order=desc&sort=likes";
+                case TipoJogadorTrade.OuroPopulares100k:
+                    return "https://www.futbin.com/players?page=1&pc_price=10000-100000&order=desc&pos_type=all&sort=likes&version=gold_rare";
                 case TipoJogadorTrade.Forragem84:
                     return "https://www.futbin.com/players?page=1&player_rating=84-84&order=desc&pos_type=all&sort=pc_price&version=gold_rare";
                 case TipoJogadorTrade.Forragem85:

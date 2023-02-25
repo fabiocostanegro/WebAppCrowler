@@ -27,10 +27,10 @@ namespace WebAppCrowler
             
             double lucroPercentual = 10;
             
-            List<ItensTabela> listaJogadoresTrade = ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k);
-            List<JogadorValorMercadoAtual> listaPrecoAtual = ConsultaPrecoWebApp(listaJogadoresTrade, ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k);
+            List<ItensTabela> listaJogadoresTrade = ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroPopulares100k);
+            List<JogadorValorMercadoAtual> listaPrecoAtual = ConsultaPrecoWebApp(listaJogadoresTrade, ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroPopulares100k);
             List<JogadorPrecoPrevisto> listaOportunidades = RetornarListaConsultaOportunidades(listaPrecoAtual,lucroPercentual);
-            List<JogadoresLance> listaOportunidadesLance = ConsultarOportunidadesLance(listaOportunidades);
+            List<JogadorValorMercadoAtual> listaOportunidadesLance = ConsultarOportunidadesLance(listaOportunidades);
             return new OkObjectResult(listaOportunidadesLance);
         }
         private static List<ItensTabela> ConsultarJogadoresTradeFutbin(ConsultaValorJogadorFutBin.TipoJogadorTrade tipo)
@@ -69,16 +69,16 @@ namespace WebAppCrowler
                 int valor = Util.FormatarValorJogador(item.Colunas[1].ValorColuna);
                 lista.Add(new JogadorPrecoPrevisto(nome, overAll, versao, valor, incrementoValor, 0,valorMaximo,0));
             }
-            List<JogadorValorMercadoAtual> listaValor = consulta.ConsultarValorJogador(lista, 30);
+            List<JogadorValorMercadoAtual> listaValor = consulta.ConsultarValorJogador(lista, 30,2, ConsultaValorJogadorWebApp.TipoConsulta.BIN);
             return listaValor;
         }
-        private static List<JogadoresLance> ConsultarOportunidadesLance(List<JogadorPrecoPrevisto> lista)
+        private static List<JogadorValorMercadoAtual> ConsultarOportunidadesLance(List<JogadorPrecoPrevisto> lista)
         {
             string caminhoProfile = "user-data-dir=C:\\Users\\55319\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 3";
 
             ConsultaValorJogadorWebApp consulta = new ConsultaValorJogadorWebApp(Fonte.FonteBase.Framework.Selenium, caminhoProfile, 30);
 
-            List<JogadoresLance> qtdJogadoreslance = consulta.ConsultarExisteJogadorLance(lista);
+            List<JogadorValorMercadoAtual> qtdJogadoreslance = consulta.ConsultarValorJogador(lista, 30, 2, ConsultaValorJogadorWebApp.TipoConsulta.BID);
 
             consulta.FecharPagina();
             
@@ -88,7 +88,7 @@ namespace WebAppCrowler
         {
             switch (tipo)
             {
-                case ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares:
+                case ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroPopulares100k:
                     return 1000;
                 case ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k:
                     return 2000;
@@ -102,7 +102,7 @@ namespace WebAppCrowler
         {
             switch (tipo)
             {
-                case ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares:
+                case ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroPopulares100k:
                     return 100000;
                 case ConsultaValorJogadorFutBin.TipoJogadorTrade.Icon100k:
                     return 120000;

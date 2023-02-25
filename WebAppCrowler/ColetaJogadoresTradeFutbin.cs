@@ -30,8 +30,8 @@ namespace WebAppCrowler
             List<ItensTabela> lista = new List<ItensTabela>();
             if (req.Query["tipo"] == "OuroNaoRaroMaisCaro")
                 lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroNaoRaroMaisCaro);
-            else if (req.Query["tipo"] == "Populares")
-                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Populares);
+            else if (req.Query["tipo"] == "PopularesOuro100k")
+                lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.OuroPopulares100k);
             else if (req.Query["tipo"] == "Forragem84")
                 lista = consulta.ConsultarJogadoresPorTipo(ConsultaValorJogadorFutBin.TipoJogadorTrade.Forragem84);
             else if (req.Query["tipo"] == "Forragem85")

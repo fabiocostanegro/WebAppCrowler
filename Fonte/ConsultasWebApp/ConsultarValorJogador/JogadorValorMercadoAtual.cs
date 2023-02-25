@@ -8,6 +8,7 @@ namespace Fonte.ConsultasWebApp.ConsultarValorJogador
     {
         public string NomeJogador;
         public Int32 ValorAtualMercado;
+        public Int32 ValorAtualLance;
         public int Overall;
         public int IdJogadorFutbin;
         public JogadorValorMercadoAtual(string pNomeJogador, Int32 pValorAtualMercado)
@@ -20,6 +21,13 @@ namespace Fonte.ConsultasWebApp.ConsultarValorJogador
             NomeJogador = pNomeJogador;
             ValorAtualMercado = pValorAtualMercado;
             Overall = pOverall;
+        }
+        public JogadorValorMercadoAtual(string pNomeJogador, Int32 pValorAtualMercado, int pOverall, int pValorAtualLance)
+        {
+            NomeJogador = pNomeJogador;
+            ValorAtualMercado = pValorAtualMercado;
+            Overall = pOverall;
+            ValorAtualLance = pValorAtualLance;
         }
     }
 }

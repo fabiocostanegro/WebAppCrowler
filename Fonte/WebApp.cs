@@ -53,6 +53,12 @@ namespace Fonte
             this.navegador.Clicar(seletorBotaoAcessoPaginaConsultarMercadoTransferencias, seletorPaginaConsultarMercadoTransferencias);
             
         }
+        public void ReiniciarFluxo()
+        {
+            string seletorInicioFluxo = "body > main > section > nav > button.ut-tab-bar-item.icon-home";
+            string seletorPaginaCarregada = "body > main > section > section > div.ut-navigation-bar-view.navbar-style-landscape.currency-purchase > h1";
+            this.navegador.Clicar(seletorInicioFluxo, seletorPaginaCarregada);
+        }
 
     }
 }
